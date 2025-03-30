@@ -48,7 +48,7 @@ async function tableData(usertype) {
   } catch (error) {
     if (error.response) {
       console.log(
-        `Request Failed: ${error.response.status} - ${error.response.statusText}`
+        `Request Failed: ${error.response.status} - ${error.response.statusText} - ${error.response}`
       );
     } else {
       console.log("Failed To Query: ", error.message);
