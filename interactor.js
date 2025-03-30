@@ -35,7 +35,7 @@ async function getAudioData(chapter, verse) {
       fs.writeFileSync(filePath, Buffer.from(response.data));
 
       console.log(`Audio saved to ${filePath}`);
-      return tempDir;
+      return filePath;
     } else {
       console.log("Failed to Retrieve Audio.");
       return "";

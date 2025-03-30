@@ -8,6 +8,7 @@ const { getVerse, getAudioData, deleteAudioData } = require("./interactor");
 const axios = require("axios");
 const { config } = require("dotenv");
 const FormData = require("form-data");
+const fs = require("fs");
 config();
 
 const token = process.env.TOKEN;
@@ -20,9 +21,10 @@ async function sendMessage(chatID, message) {
     const params = {
       chat_id: chatID,
       text: message,
+      parse_mode: "",
     };
-    const response = await axios.post(URL, params);
-    console.log("Message sent successfully:", response.data);
+    const response = await axios.post(url, params);
+    console.log("Message sent successfully.");
   } catch (err) {
     console.error("Error In sendMessage: ", err);
   }
@@ -32,12 +34,12 @@ async function sendAudio(chatID, audioPath) {
   try {
     const form = new FormData();
     form.append("chat_id", chatID);
-    form.append("audio", fs.createReadStream(audioFilePath));
+    form.append("audio", fs.createReadStream(audioPath));
 
-    const response = await axios.post(url, form, {
+    const response = await axios.post(url2, form, {
       headers: form.getHeaders(),
     });
-    console.log("Audio sent successfully:", response.data);
+    console.log("Audio sent successfully");
   } catch (err) {
     console.error("Error in sendAudio:", err);
   }
@@ -46,21 +48,29 @@ async function sendAudio(chatID, audioPath) {
 async function sendRandomMessages() {
   try {
     const randomTableData = await tableData("random");
+    const currentTime = await getTime();
     for (row of randomTableData) {
-      console.log(`Trying for user: ${row["username"]}`);
-      if (row["time"] === getTime()) {
-        const { chapter, verse } = await returnRandomVerse();
+      console.log(`${await getTime()}: Trying for user: ${row["username"]}`);
+      console.log(
+        `Scheduled Time: ${row["time"]} | Current Time: ${currentTime}`
+      );
+      if (row["time"] === currentTime) {
+        const chapterAndVerse = await returnRandomVerse();
+        const chapter = chapterAndVerse[0];
+        const verse = chapterAndVerse[1];
         const data = await getVerse(chapter, verse);
         const message = formatVerseMessage(data);
         const chatID = row["chatId"];
 
         await sendMessage(chatID, message);
 
-        const audioPath = getAudioData(chapter, verse);
-        sendAudio(chatID, audioPath);
+        const audioPath = await getAudioData(chapter, verse);
+        await sendAudio(chatID, audioPath);
         deleteAudioData(chapter, verse);
 
         console.log(`Message sent for ${row["username"]}.`);
+      } else {
+        console.log("Not the time.");
       }
     }
   } catch (err) {
