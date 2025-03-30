@@ -25,7 +25,7 @@ async function query(username) {
   } catch (error) {
     if (error.response) {
       console.log(
-        `Request Failed: ${error.response.status} - ${error.response.statusText}`
+        `Request Failed: ${error.response.status} - ${error.response.statusText} - ${error.response}`
       );
     } else {
       console.log("Failed To Query: ", error.message);
@@ -114,5 +114,5 @@ module.exports = {
   tableData,
   returnRandomVerse,
   getTime,
-  formatVerseMessage
+  formatVerseMessage,
 };
