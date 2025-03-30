@@ -5,7 +5,6 @@ config();
 const USERNAME = process.env.API_USERNAME;
 const PASSWORD = process.env.API_PASSWORD;
 const URL = "https://bhagvad-gita-db.vercel.app";
-const VERSES = "https://bhagvad-gita-api.vercel.app"
 
 const auth = {
   username: USERNAME,

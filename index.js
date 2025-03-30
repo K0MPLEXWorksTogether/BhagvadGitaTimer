@@ -47,6 +47,7 @@ async function sendRandomMessages() {
   try {
     const randomTableData = await tableData("random");
     for (row of randomTableData) {
+      console.log(`Trying for user: ${row["username"]}`);
       if (row["time"] === getTime()) {
         const { chapter, verse } = await returnRandomVerse();
         const data = await getVerse(chapter, verse);
@@ -68,7 +69,7 @@ async function sendRandomMessages() {
 }
 
 async function main() {
-  await sendRandomMessages()
+  await sendRandomMessages();
 }
 
 main();
